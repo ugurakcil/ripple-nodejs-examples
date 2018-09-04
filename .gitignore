@@ -59,6 +59,9 @@ typings/
 
 # next.js build output
 .next
+<<<<<<< HEAD
 
 # other unnecessary directories
 dump/
+=======
+>>>>>>> 8b3301e0752c664b70908ab6eb53eabd17bc3aa6

@@ -13,7 +13,6 @@ const api = new RippleAPI({
 });
 
 api.connect().then(() => {
-
   api.connection.on('transaction', (event) => {
     var post = JSON.stringify(event);
 
@@ -25,38 +24,39 @@ api.connect().then(() => {
       }
     );
 
-   console.log('QUERY:'+query.sql);
-
-   //console.log(JSON.stringify(event, null, 2));
+   console.dir(post);
   });
 
+  var liveAccounts = [];
 
-  api.request('subscribe', {
-    accounts: [accounts.second.address ]
-  }).then(response => {
+  function setLiveAccounts(account){
+    liveAccounts.push(account);
+  }
 
-   //var responseTest = { x: 5 };
-   /*
-   var post = JSON.stringify(response);
+  function getLiveAccounts(){
+    return liveAccounts;
+  }
 
-    var query = connection.query(
-      'INSERT INTO transactions SET ?',
-      {data: '['+post+']'},
-      function(error, results, fields){
-       if(error) throw error;
-      }
-    );
+  function setSubscribe(){
+   connection.query('SELECT * FROM accounts ORDER BY id DESC')
+   .then(results => {
+     liveAccounts = [];
+     results.forEach(function(row){
+      setLiveAccounts(row.public_key);
+     });
+   })
+   .then(results => {
+     api.request('subscribe', {
+       accounts: getLiveAccounts()
+     }).then(response => {
+       console.dir(response);
+     }).catch(error => {
+        console.log('############### ERROR ###############\n');
+        console.log(error);
+     });
+   });
+  }
 
-   console.log('QUERY:'+query.sql);
-   */
-   console.dir(response);
-  }).catch(error => {
-    console.log('############### ERROR ###############\n');
-    console.log(error);
-  });
-
-
-   //console.info(transactions);
-   //process.exit(0);
-
+  setSubscribe();
+  setInterval(setSubscribe, 5 * 60 * 1000);
 });

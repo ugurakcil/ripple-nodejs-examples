@@ -22,16 +22,14 @@ module.exports =
  },
  connection: function()
  {
-  var mysql      = require('mysql');
+  var mysql = require('promise-mysql');
 
-  var connection = mysql.createConnection({
+  var connection = mysql.createPool({
      host     : 'localhost',
      user     : 'root',
      password : '*',
      database : 'rippled'
   });
-
-  connection.connect();
 
   return connection;
  }
